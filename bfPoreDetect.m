@@ -1,4 +1,4 @@
-function [ pore_locs ] = bfPoreDetect( img_bf , rad_est )
+function [ pore_locs , nn_seprange ] = bfPoreDetect( img_bf , rad_est )
 %bfPoreDetect Uses input brightfield image and an estimated pore outer
 %radius to pick out the most obvious pores and return their locations
 %   INPUT:  img_bf - cropped brightfield image
@@ -113,9 +113,11 @@ minvals = min(dispmat);
 std_fact = 2;
 [mu1,std1] = extractBGstats(minvals,std_fact);
 nnmat = dispmat - mu1;
-nnmat = abs(nnmat) < std1*1;
+nnstd_fact = 1;
+nnmat = abs(nnmat) < std1*nnstd_fact;
 numnn = sum(nnmat);
 
+nn_seprange = [-1,1]*nnstd_fact + mu;
 % Only pass pts with at least 2 neighbors
 pts2keep = find(numnn >= 2);
 pore_locs = [x0s(pts2keep),y0s(pts2keep)];
