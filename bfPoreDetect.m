@@ -117,7 +117,7 @@ nnstd_fact = 1;
 nnmat = abs(nnmat) < std1*nnstd_fact;
 numnn = sum(nnmat);
 
-nn_seprange = [-1,1]*nnstd_fact + mu;
+nn_seprange = [-1,1]*nnstd_fact*std1 + mu1;
 % Only pass pts with at least 2 neighbors
 pts2keep = find(numnn >= 2);
 pore_locs = [x0s(pts2keep),y0s(pts2keep)];
