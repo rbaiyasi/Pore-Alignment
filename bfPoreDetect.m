@@ -95,18 +95,10 @@ convim2 = wkeep(convim2,size(BF)); % trim down to size(BF)
 [ys2,xs2] = ind2sub(size(BF),lm_idx2);
 
 %% Use regularity of pore spacing to filter out false pores
-% x,y coordinates as two separate column vectors
-% ADJUSTABLE
 x0s = xs2(:);
 y0s = ys2(:);
-
-% Distances between all points
-xxmat = repmat(x0s,1,numel(x0s));
-yymat = repmat(y0s,1,numel(y0s));
-xdiff2 = (xxmat - xxmat').^2;
-ydiff2 = (yymat - yymat').^2;
-dispmat = sqrt(xdiff2+ydiff2);
-dispmat(dispmat == 0 ) = NaN; % Ignore self-distance of zero
+ptslist = [x0s,y0s];
+dispmat = genDispmat(ptslist);
 % Use the nearest-neigbor of each candidate to estimate pore spacing 
 minvals = min(dispmat);
 
