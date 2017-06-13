@@ -37,7 +37,10 @@ lininds3 = sub2ind(boxres*[1,1],ys3,xs3);
 img_test1 = zeros(boxres);
 img_test1(lininds1) = 1;
 img_test1(lininds2) = -1;
-img_test1(lininds3) = 0.5;
+img_testtmp = false(boxres);
+img_testtmp(lininds3) = true;
+img_testtmp = imfill(img_testtmp,round([1,1]*boxres/2));
+img_test1(img_testtmp) = 0.25;
 
 %% convolve with brightfield image to get initial pore locations
 % calculate non-uniform background for subtraction (to improve convolution)
