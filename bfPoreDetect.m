@@ -105,7 +105,7 @@ minvals = min(dispmat);
 std_fact = 2;
 [mu1,std1] = extractBGstats(minvals,std_fact);
 nnmat = dispmat - mu1;
-nnstd_fact = 1;
+nnstd_fact = 3;
 nnmat = abs(nnmat) < std1*nnstd_fact;
 numnn = sum(nnmat);
 
