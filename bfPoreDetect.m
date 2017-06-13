@@ -18,6 +18,7 @@ xs = cos(thetas); ys = sin(thetas);
 
 rad1 = rad_est; % larger (bright circle)
 rad2 = rad1-1; % smaller (dark circle)
+rad3 = rad1-2; % smaller (bright filled)
 boxrad = round(rad1*2);
 boxres = ceil(2*boxrad+1); % size of img_test1
 r0 = [0,0]+boxres/2+0.5; % center of img_test1
@@ -28,11 +29,15 @@ lininds1 = sub2ind(boxres*[1,1],ys1,xs1);
 % inner circle
 xs2 = round(rad2*xs+r0(1)); ys2 = round(rad2*ys+r0(2));
 lininds2 = sub2ind(boxres*[1,1],ys2,xs2);
+% most inner circle
+xs3 = round(rad3*xs+r0(1)); ys3 = round(rad3*ys+r0(2));
+lininds3 = sub2ind(boxres*[1,1],ys3,xs3);
 
 % IMG_TEST1
 img_test1 = zeros(boxres);
 img_test1(lininds1) = 1;
 img_test1(lininds2) = -1;
+img_test1(lininds3) = 0.5;
 
 %% convolve with brightfield image to get initial pore locations
 % calculate non-uniform background for subtraction (to improve convolution)
