@@ -37,6 +37,6 @@ Vslope = cot(-mean(NNang(3:4)));
 Vint = ptslopeform(Vslope,porelocs(kk,:));
 % Use initial lines to calculate the full array of lines. Vertical lines
 % are transposed, calculated, and transposed back to ease calculation.
-Hlines = calcParaLines([Hslope;Hint],porelocs);
-Vlines = calcParaLines(transLine([Vslope;Vint]),fliplr(porelocs));
-Vlines = transLine(Vlines);
+hLines = calcParaLines([Hslope;Hint],porelocs);
+vLines = calcParaLines(transLine([Vslope;Vint]),fliplr(porelocs));
+vLines = transLine(vLines);
