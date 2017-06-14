@@ -8,10 +8,10 @@ function [ all_lines ] = calcParaLines( in_line , ptslist )
 %   OUTPUT: all_lines - sorted output of lines formatted as column vectors
 %               of form [slope;intercept]. All slopes will be equal.
 %% Error Codes
-varHsepsError.message = 'Line separations not consistent';
-varHsepsError.identifier = 'FUNCTION:inconsistentSeparations';
+stdHsepsError.message = 'Line separations not consistent';
+stdHsepsError.identifier = 'FUNCTION:inconsistentSeparations';
 %% Threshold definition
-thd_varHseps = 5; %Arbitrary right now
+thd_stdHseps = 4; %Arbitrary right now
 
 %% Calculating line spacings
 m0 = in_line(1);
@@ -32,9 +32,9 @@ Hseps = Hlevels(2:end) - Hlevels(1:end-1);
 Hoffset = mean(Hseps);
 % Use threshold to ensure the lines are close enough together to warrent
 % using the mean as a line spacing parameter.
-if var(Hseps) > thd_varHseps
-    disp(['Variance in separations = ', num2str(var(Hseps))]);
-    error(varHsepsError);
+if std(Hseps) > thd_stdHseps
+    disp(['Std. dev. in separations = ', num2str(std(Hseps))]);
+    error(stdHsepsError);
 end
 
 %% Calculating lines
