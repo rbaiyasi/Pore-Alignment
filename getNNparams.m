@@ -62,6 +62,9 @@ end
 %% Return Values
 NNdists = NNdist(allNNidx);
 NNangs = NNang(allNNidx);
+% Wrap angle of definition to improve averaging
+NNangs(1,:) =  wrapToPi(NNangs(1,:));
+NNangs(2,:) = wrapTo2Pi(NNangs(2,:));
 resortIdx = allNNidx;
 % resortIdx(resortIdx == numNN + 1) = 0;
 
