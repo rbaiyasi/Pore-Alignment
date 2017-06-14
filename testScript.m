@@ -5,8 +5,8 @@ clearvars
 load BF_area14_crop
 init_rad = 19;
 
-load small_pores1_crop
-init_rad = 10;
+% load small_pores1_crop
+% init_rad = 10;
 
 %% Determine inital pore localizations through bfPoreDetect
 [Y,X] = size(bf);
@@ -27,24 +27,49 @@ hold off
 %% Get initial grid lines from gridFromLocs, then get grid points
 % Grid points are used to pick out regions of interest for refining pore
 % localization in the next step.
-[ hLines , vLines ] = gridFromLocs( porelocs , nn_seprange );
-init_grid_pts = calcGridIntersections(hLines,hLines);
+[ Hlines , Vlines ] = gridFromLocs( porelocs , nn_seprange );
+init_grid_pts = calcGridIntersections(Hlines,Hlines);
 
 % Update Figure 1 for visualization
 figure(1);
 hold on
 xxH = [1,X]; % Horizontal lines
-for k = 1:size(hLines,2)
-    yyH = hLines(1,k)*xxH + hLines(2,k);
+for k = 1:size(Hlines,2)
+    yyH = Hlines(1,k)*xxH + Hlines(2,k);
     plot(xxH,yyH,'k');
 end
 yyV = [1,Y]; % Vertical lines
-tvLines = transLine(vLines);
-for k = 1:size(vLines,2)
-    xxV = tvLines(1,k)*yyV + tvLines(2,k);
+tVlines = transLine(Vlines); % transpose for ease of plotting
+for k = 1:size(Vlines,2)
+    xxV = tVlines(1,k)*yyV + tVlines(2,k);
     plot(xxV,yyV,'k')
 end
 hold off
 
 
 %% from grid intersections, get refined pore localizations
+% Needs work. It is important that there is a defined way to translate
+% refined localizations in the roi back to the final image.
+% useful values from line data
+vseps = abs((Vlines(2,2) - Vlines(2,1))/Vlines(1,1));
+hseps = abs(Hlines(2,2) - Hlines(2,1));
+% define sub-grid with middle selection of grid points
+V = size(Vlines,2) - 2;
+H = size(Hlines,2) - 2;
+if H < 2 || V < 2
+    error('Not enough grid points')
+end
+sub_grid_pts = calcGridIntersections(Hlines(:,2:end-1),Vlines(:,2:end-1));
+numgp = size(sub_grid_pts,1);
+
+boxrad = floor(min(vseps,hseps)/2) - 1;
+boxsize = 2*boxrad + 1;
+img_rois = zeros( boxsize , boxsize , numgp );
+for k = 1:numgp
+    ul = round(sub_grid_pts(k,:) - boxrad);
+    lr = ul+boxsize - 1;
+    img_rois(:,:,k) = crop(bf,ul,lr);
+end
+
+mov = makeimmovie(img_rois);
+implay(mov)
