@@ -64,11 +64,16 @@ numgp = size(sub_grid_pts,1);
 
 boxrad = floor(min(vseps,hseps)/2) - 1;
 boxsize = 2*boxrad + 1;
+clearvars img_rois
+porerois(numgp).ul = [];
+porerois(numgp).img = [];
 img_rois = zeros( boxsize , boxsize , numgp );
 for k = 1:numgp
     ul = round(sub_grid_pts(k,:) - boxrad);
     lr = ul+boxsize - 1;
     img_rois(:,:,k) = crop(bf,ul,lr);
+    porerois(k).ul = ul;
+    porerois(k).img = crop(bf,ul,lr);
 end
 
 mov = makeimmovie(img_rois);
