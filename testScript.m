@@ -69,13 +69,13 @@ clearvars img_rois
 porerois(numgp).ul = [];
 porerois(numgp).img = [];
 img_rois = zeros( boxsize , boxsize , numgp );
+uls = zeros(numgp,2);
 for k = 1:numgp
     ul = round(sub_grid_pts(k,:) - boxrad);
     lr = ul+boxsize - 1;
     tmpim2 = crop(bf,ul,lr);
     img_rois(:,:,k) = tmpim2;
-    porerois(k).ul = ul;
-    porerois(k).img = tmpim2;
+    uls(k,:) = ul;
 end
 
 mov = makeimmovie(img_rois);
@@ -85,14 +85,12 @@ mov = makeimmovie(img_rois);
 [ xy0 , R ] = poreFit2Circle( img_rois );
 
 % Add refined pore positions to figure(1)
-porecells = squeeze(struct2cell(porerois));
-ulcells = porecells(1,:);
-uls = cell2mat(ulcells);
-uls = reshape(uls,2,numgp)';
+
 porelocs2 = uls + xy0 - 1;
 figure(1)
 hold on
 scatter(porelocs2(:,1),porelocs2(:,2),200,'+w')
+viscircles(gca,porelocs2,R)
 hold off
 % CC = bwconncomp(tmpedges)
 % figure(1)
