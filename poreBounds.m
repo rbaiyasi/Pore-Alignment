@@ -85,9 +85,9 @@ for k = 1:CC.NumObjects
     if max(tmpdisp) <= 2
 %         disp([num2str(k), ' is closed'])
         closedflags(k) = true;
-        CC.closed = true;
+        CC.closed(k) = true;
     else
-        CC.closed = false;
+        CC.closed(k) = false;
     end
 end
 if sum(closedflags) == 0

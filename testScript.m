@@ -11,7 +11,8 @@ init_rad = 19;
 %% Determine inital pore localizations through bfPoreDetect
 [Y,X] = size(bf);
 [ porelocs , nn_seprange ] = bfPoreDetect(bf,init_rad);
-
+bg = imopen(bf,strel('disk',round(init_rad*1)));
+BF = bf - bg;
 % Figure for visualization of the points
 figure(1)
 imagesc(bf); axis image
@@ -71,10 +72,61 @@ img_rois = zeros( boxsize , boxsize , numgp );
 for k = 1:numgp
     ul = round(sub_grid_pts(k,:) - boxrad);
     lr = ul+boxsize - 1;
-    img_rois(:,:,k) = crop(bf,ul,lr);
+    tmpim2 = crop(bf,ul,lr);
+    img_rois(:,:,k) = tmpim2;
     porerois(k).ul = ul;
-    porerois(k).img = crop(bf,ul,lr);
+    porerois(k).img = tmpim2;
 end
 
 mov = makeimmovie(img_rois);
-implay(mov)
+% implay(mov)
+
+%% Testing pore localization through circular fitting
+k = 1;
+tic
+for k = 1:numgp
+cthd = [];
+csigma = sqrt(2);
+tmpimg = porerois(k).img;
+tmpedges = edge(tmpimg,'Canny',cthd,csigma);
+[tmpedges,CC] = poreBounds(tmpimg,csigma);
+[B,L] = bwboundaries(tmpedges,'noholes');
+end
+toc
+% CC = bwconncomp(tmpedges)
+figure(1)
+imagesc(tmpimg); axis image
+setFont
+hold on
+for k = 1:length(B)
+   boundary = B{k};
+   plot(boundary(:,2), boundary(:,1), 'w', 'LineWidth', 2)
+end
+hold off
+
+% figure(2)
+% imagesc(tmpedges)
+% axis image
+% setFont
+
+% bw2 = tmpedges;
+% [Y,X] = size(tmpimg);
+% C = round(X/2);
+% midslice = bw2(:,C);
+% testregs = {};
+% cnt = 0;
+% while sum(midslice) > 0 && cnt < 1e6
+%     R = find(midslice,1);
+%     tmpbndry = bwtraceboundary(bw2,[R,C],'N');
+%     tmpinds = sub2ind([Y,X],tmpbndry(:,1),tmpbndry(:,2));
+%     bw2(tmpinds) = 0;
+%     testregs = [testregs,{tmpinds}];
+%     midslice = bw2(:,C);
+%     cnt = cnt+1;
+% end
+%  
+% sizethresh = 50;
+% currsizes = cellfun(@numel,testregs);
+% testregs = testregs(currsizes >= sizethresh);
+
+
