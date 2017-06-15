@@ -82,16 +82,49 @@ mov = makeimmovie(img_rois);
 % implay(mov)
 
 %% Testing pore localization through circular fitting
-k = 1;
+k = 9;
 tic
+clearvars CC
+% Get closed boundaries for each pore edge detection
 for k = 1:numgp
-cthd = [];
-csigma = sqrt(2);
-tmpimg = porerois(k).img;
-tmpedges = edge(tmpimg,'Canny',cthd,csigma);
-[tmpedges,CC] = poreBounds(tmpimg,csigma);
-[B,L] = bwboundaries(tmpedges,'noholes');
+%     disp(k)
+    cthd = [];
+    csigma = sqrt(3);
+    tmpimg = porerois(k).img;
+    tmpedges = edge(tmpimg,'Canny',cthd,csigma);
+%     try
+        [tmpedges,CC(k)] = poreBounds(tmpimg,csigma);
+        [B,L] = bwboundaries(tmpedges,'noholes');
+%     catch ME
+%         if strcmp(ME.identifier,'pores:poreBounds:noClosedEdges')
+%             disp(['Pore #',num2str(k),': ',ME.message])
+%             CC(k).closed = 'none';
+%         else
+%             error(ME)
+%         end
+%     end
 end
+
+%
+xc = zeros(numgp,1);
+yc = xc;
+R = xc;
+for k = 1:numgp
+    cc = CC(k);
+    if sum(cc.closed) > 0
+        edgesizes = cellfun(@numel,cc.PixelIdxList);
+        edgesizes = edgesizes.*cc.closed; %only look at closed circles
+        [~,idx2use] = max(edgesizes);
+        l = idx2use;
+        [tmpy,tmpx] = ind2sub(cc.ImageSize,cc.PixelIdxList{l});
+        [xc(k),yc(k),R(k)] = circfit(tmpx,tmpy);
+    else
+        xc(k) = NaN;
+        yc(k) = NaN;
+        R(k) = NaN;
+    end   
+end
+    
 toc
 % CC = bwconncomp(tmpedges)
 figure(1)
