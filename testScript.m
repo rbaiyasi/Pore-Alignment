@@ -82,59 +82,17 @@ mov = makeimmovie(img_rois);
 % implay(mov)
 
 %% Testing pore localization through circular fitting
-k = 9;
-tic
-clearvars CC
-% Get closed boundaries for each pore edge detection
-for k = 1:numgp
-%     disp(k)
-    cthd = [];
-    csigma = sqrt(3);
-    tmpimg = porerois(k).img;
-    tmpedges = edge(tmpimg,'Canny',cthd,csigma);
-%     try
-        [tmpedges,CC(k)] = poreBounds(tmpimg,csigma);
-        [B,L] = bwboundaries(tmpedges,'noholes');
-%     catch ME
-%         if strcmp(ME.identifier,'pores:poreBounds:noClosedEdges')
-%             disp(['Pore #',num2str(k),': ',ME.message])
-%             CC(k).closed = 'none';
-%         else
-%             error(ME)
-%         end
-%     end
-end
+[ xy0 , R ] = poreFit2Circle( img_rois );
 
-% Get centers and radii of circles fit to largest closed boundaries
-xc = zeros(numgp,1);
-yc = xc;
-R = xc;
-for k = 1:numgp
-    cc = CC(k);
-    if sum(cc.closed) > 0
-        edgesizes = cellfun(@numel,cc.PixelIdxList);
-        edgesizes = edgesizes.*cc.closed; %only look at closed circles
-        [~,idx2use] = max(edgesizes);
-        l = idx2use;
-        [tmpy,tmpx] = ind2sub(cc.ImageSize,cc.PixelIdxList{l});
-        [xc(k),yc(k),R(k)] = circfit(tmpx,tmpy);
-    else
-        xc(k) = NaN;
-        yc(k) = NaN;
-        R(k) = NaN;
-    end   
-end 
-toc
-
-%% Return refined pore positions
+% Add refined pore positions to figure(1)
 porecells = squeeze(struct2cell(porerois));
 ulcells = porecells(1,:);
 uls = cell2mat(ulcells);
 uls = reshape(uls,2,numgp)';
-porelocs2 = uls + [xc,yc] - 1;
+porelocs2 = uls + xy0 - 1;
 figure(1)
 hold on
-scatter(porelocs2(:,1),porelocs2(:,2),5000,'+b')
+scatter(porelocs2(:,1),porelocs2(:,2),200,'+w')
 hold off
 % CC = bwconncomp(tmpedges)
 % figure(1)
