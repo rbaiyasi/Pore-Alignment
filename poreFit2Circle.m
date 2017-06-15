@@ -23,6 +23,7 @@ end
 xy0 = zeros(N,2);
 R = zeros(N,1);
 for n = 1:N
+    clearvars bw1 CC
     im1 = img(:,:,n);
     % Get the pore boundaries with initial filtering
     [ bw1 , CC ] = poreBounds(im1 , CannySigma);
@@ -33,7 +34,7 @@ for n = 1:N
         boundsize = boundsize .* CC.closed;
         [~,idx2use] = max(boundsize);
         % Use coordinates of boundary pixels to estimate fit circle
-        [x,y] = ind2sub(CC.ImageSize,CC.PixelIdxList{idx2use});
+        [y,x] = ind2sub(CC.ImageSize,CC.PixelIdxList{idx2use});
         [xc,yc,tmpR] = circfit(x,y);
     else % if there are no closed boundaries, return NaNs
         xc = NaN;
