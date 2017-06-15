@@ -7,7 +7,7 @@ function [ boundimg , CC ] = poreBounds( im , varargin )
 %                       used in the Canny filter. Defaults to sqrt(2).
 %% Error Codes
 noclosedError.identifier = 'pores:poreBounds:noClosedEdges';
-noclosedError.message = 'None of the detected edges are closed';
+noclosedError.message = 'No edges approximate closed circles about the origin';
 
 %% varargin - { CannySigma ,
 defargs = {sqrt(2)};
