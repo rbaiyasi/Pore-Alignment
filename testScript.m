@@ -37,13 +37,13 @@ hold on
 xxH = [1,X]; % Horizontal lines
 for k = 1:size(Hlines,2)
     yyH = Hlines(1,k)*xxH + Hlines(2,k);
-    plot(xxH,yyH,'k');
+    plot(xxH,yyH,'--k');
 end
 yyV = [1,Y]; % Vertical lines
 tVlines = transLine(Vlines); % transpose for ease of plotting
 for k = 1:size(Vlines,2)
     xxV = tVlines(1,k)*yyV + tVlines(2,k);
-    plot(xxV,yyV,'k')
+    plot(xxV,yyV,'--k')
 end
 hold off
 
@@ -105,7 +105,7 @@ for k = 1:numgp
 %     end
 end
 
-%
+% Get centers and radii of circles fit to largest closed boundaries
 xc = zeros(numgp,1);
 yc = xc;
 R = xc;
@@ -123,19 +123,29 @@ for k = 1:numgp
         yc(k) = NaN;
         R(k) = NaN;
     end   
-end
-    
+end 
 toc
-% CC = bwconncomp(tmpedges)
+
+%% Return refined pore positions
+porecells = squeeze(struct2cell(porerois));
+ulcells = porecells(1,:);
+uls = cell2mat(ulcells);
+uls = reshape(uls,2,numgp)';
+porelocs2 = uls + [xc,yc] - 1;
 figure(1)
-imagesc(tmpimg); axis image
-setFont
 hold on
-for k = 1:length(B)
-   boundary = B{k};
-   plot(boundary(:,2), boundary(:,1), 'w', 'LineWidth', 2)
-end
+scatter(porelocs2(:,1),porelocs2(:,2),5000,'+b')
 hold off
+% CC = bwconncomp(tmpedges)
+% figure(1)
+% imagesc(tmpimg); axis image
+% setFont
+% hold on
+% for k = 1:length(B)
+%    boundary = B{k};
+%    plot(boundary(:,2), boundary(:,1), 'w', 'LineWidth', 2)
+% end
+% hold off
 
 % figure(2)
 % imagesc(tmpedges)
