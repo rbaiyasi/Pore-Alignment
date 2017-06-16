@@ -1,4 +1,5 @@
 %% testScript 
+warning('off','all')
 %% Load Data - optional choice between large or small pores
 % Pore size is manually input here - this will probably be the last step
 clearvars
@@ -49,7 +50,7 @@ hold off
 
 
 %% from grid intersections, get refined pore localizations
-[ extractedROIs ] = extractPoreImgsFromGrid( bf , Hlines , Vlines , 1);
+[ extractedROIs ] = extractPoreImgsFromGrid( bf , Hlines , Vlines , 0);
 img_rois = extractedROIs.imgs;
 uls = extractedROIs.uls;
 mov = makeimmovie(img_rois);
@@ -103,3 +104,4 @@ hold off
 % testregs = testregs(currsizes >= sizethresh);
 
 
+warning('on','all')
