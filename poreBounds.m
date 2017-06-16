@@ -95,7 +95,7 @@ for k = 1:CC.NumObjects
     end
 end
 if sum(closedflags) == 0
-    disp(noclosedError.message)
+    warning(noclosedError.message)
 %     error(noclosedError);
 end
     
