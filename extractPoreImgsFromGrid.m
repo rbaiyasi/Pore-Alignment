@@ -13,11 +13,11 @@ function [ extractedROIs ] = extractPoreImgsFromGrid( full_img , Hlines , Vlines
 %               field 'uls' as a Nx2 array of [x,y] pixel coordinates for
 %               the top corner of each image.
 %% Error Definitions
-notEnoughError.identifier = pores:extractPoreImgsFromGrid:notEnoughPores;
+notEnoughError.identifier = 'pores:extractPoreImgsFromGrid:notEnoughPores';
 notEnoughError.message = 'Need at least 2 row and 2 columns in sub-grid';
 %% varargin - {bordersize,
 defargs = {1};
-if nargin > 2
+if nargin > 3
     arginds = find(~cellfun(@isempty,varargin));
     defargs(arginds) = varargin(arginds);
 end
@@ -34,7 +34,8 @@ if H < 2 || V < 2
     % columns.
     error(notEnoughError)
 end
-sub_grid_pts = calcGridIntersections(Hlines(:,2:end-1),Vlines(:,2:end-1));
+sub_grid_pts = calcGridIntersections(Hlines(:,1+bordersize:end-bordersize),...
+    Vlines(:,1+bordersize:end-bordersize));
 num_gridpts = size(sub_grid_pts,1);
 
 % Define size of square area to crop around each grid intersection based on
@@ -47,8 +48,12 @@ uls = zeros(num_gridpts,2);
 for k = 1:num_gridpts
     ul = round(sub_grid_pts(k,:) - cropbox_rad);
     lr = ul+cropbox_size - 1;
-    tmpim2 = crop(full_img,ul,lr);
-    img_rois(:,:,k) = tmpim2;
+    [tmpim2,ul] = crop(full_img,ul,lr);
+    if isequal(size(tmpim2),[1,1]*cropbox_size)
+        img_rois(:,:,k) = tmpim2;
+    else
+        img_rois(:,:,k) = NaN;
+    end
     uls(k,:) = ul;
 end
 

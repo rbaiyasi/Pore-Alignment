@@ -18,7 +18,11 @@ end
 [CannySigma] = defargs{:};
 %% Initial edge detection
 [Y,X] = size(im);
-bw1 = edge( im , 'Canny' , [] , CannySigma);
+if ~isnan(im(1))
+    bw1 = edge( im , 'Canny' , [] , CannySigma);
+else
+    bw1 = ones(size(im));
+end
 
 %% Uses center-lines through cell array to filter out schmutz
 bw2 = bw1;

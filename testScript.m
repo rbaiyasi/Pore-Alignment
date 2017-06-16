@@ -5,8 +5,8 @@ clearvars
 load BF_area14_crop
 init_rad = 18;
 
-% load small_pores1_crop
-% init_rad = 10;
+load small_pores1_crop
+init_rad = 10;
 
 %% Determine inital pore localizations through bfPoreDetect
 [Y,X] = size(bf);
@@ -49,35 +49,9 @@ hold off
 
 
 %% from grid intersections, get refined pore localizations
-% Needs work. It is important that there is a defined way to translate
-% refined localizations in the roi back to the final image.
-% useful values from line data
-vseps = abs((Vlines(2,2) - Vlines(2,1))/Vlines(1,1));
-hseps = abs(Hlines(2,2) - Hlines(2,1));
-% define sub-grid with middle selection of grid points
-V = size(Vlines,2) - 2;
-H = size(Hlines,2) - 2;
-if H < 2 || V < 2
-    error('Not enough grid points')
-end
-sub_grid_pts = calcGridIntersections(Hlines(:,2:end-1),Vlines(:,2:end-1));
-numgp = size(sub_grid_pts,1);
-
-boxrad = floor(min(vseps,hseps)/2) - 1;
-boxsize = 2*boxrad + 1;
-clearvars img_rois
-porerois(numgp).ul = [];
-porerois(numgp).img = [];
-img_rois = zeros( boxsize , boxsize , numgp );
-uls = zeros(numgp,2);
-for k = 1:numgp
-    ul = round(sub_grid_pts(k,:) - boxrad);
-    lr = ul+boxsize - 1;
-    tmpim2 = crop(bf,ul,lr);
-    img_rois(:,:,k) = tmpim2;
-    uls(k,:) = ul;
-end
-
+[ extractedROIs ] = extractPoreImgsFromGrid( bf , Hlines , Vlines , 1);
+img_rois = extractedROIs.imgs;
+uls = extractedROIs.uls;
 mov = makeimmovie(img_rois);
 % implay(mov)
 
@@ -90,7 +64,7 @@ porelocs2 = uls + xy0 - 1;
 figure(1)
 hold on
 scatter(porelocs2(:,1),porelocs2(:,2),200,'+w')
-viscircles(gca,porelocs2,R)
+viscircles(gca,porelocs2,R);
 hold off
 % CC = bwconncomp(tmpedges)
 % figure(1)
