@@ -60,3 +60,4 @@ end
 % Combine images and upper-left coordinates into a scalar structure.
 extractedROIs.imgs = img_rois;
 extractedROIs.uls = uls;
+extractedROIs.dims = [H,V];

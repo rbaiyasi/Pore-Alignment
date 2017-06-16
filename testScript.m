@@ -23,7 +23,7 @@ tmpnums = 1:size(porelocs,1);
 tmpnums = cellstr(num2str(tmpnums'));
 hold on
 scatter(porelocs(:,1),porelocs(:,2),50,'r');
-text(porelocs(:,1),porelocs(:,2),tmpnums,'r');
+% text(porelocs(:,1),porelocs(:,2),tmpnums,'r');
 hold off
 
 %% Get initial grid lines from gridFromLocs, then get grid points
@@ -50,58 +50,34 @@ hold off
 
 
 %% from grid intersections, get refined pore localizations
-[ extractedROIs ] = extractPoreImgsFromGrid( bf , Hlines , Vlines , 0);
-img_rois = extractedROIs.imgs;
-uls = extractedROIs.uls;
-mov = makeimmovie(img_rois);
+[ extractedROIs ] = extractPoreImgsFromGrid( bf , Hlines , Vlines , 1);
+
+
+% Create movie of ROI images
+mov = makeimmovie(extractedROIs.imgs);
 % implay(mov)
 
 %% Testing pore localization through circular fitting
-[ xy0 , R ] = poreFit2Circle( img_rois );
+[ xy0 , R ] = poreFit2Circle( extractedROIs.imgs );
+
 
 % Add refined pore positions to figure(1)
-
-porelocs2 = uls + xy0 - 1;
+porelocs2 = extractedROIs.uls + xy0 - 1;
 figure(1)
 hold on
 scatter(porelocs2(:,1),porelocs2(:,2),200,'+w')
 viscircles(gca,porelocs2,R);
 hold off
-% CC = bwconncomp(tmpedges)
-% figure(1)
-% imagesc(tmpimg); axis image
-% setFont
-% hold on
-% for k = 1:length(B)
-%    boundary = B{k};
-%    plot(boundary(:,2), boundary(:,1), 'w', 'LineWidth', 2)
-% end
-% hold off
 
-% figure(2)
-% imagesc(tmpedges)
-% axis image
-% setFont
-
-% bw2 = tmpedges;
-% [Y,X] = size(tmpimg);
-% C = round(X/2);
-% midslice = bw2(:,C);
-% testregs = {};
-% cnt = 0;
-% while sum(midslice) > 0 && cnt < 1e6
-%     R = find(midslice,1);
-%     tmpbndry = bwtraceboundary(bw2,[R,C],'N');
-%     tmpinds = sub2ind([Y,X],tmpbndry(:,1),tmpbndry(:,2));
-%     bw2(tmpinds) = 0;
-%     testregs = [testregs,{tmpinds}];
-%     midslice = bw2(:,C);
-%     cnt = cnt+1;
-% end
-%  
-% sizethresh = 50;
-% currsizes = cellfun(@numel,testregs);
-% testregs = testregs(currsizes >= sizethresh);
-
+%% Fit pore locs to auto-generated grid to initialize alignment
+% Number of horizontal and vertical lines
+roiDims = extractedROIs.dims;
+[Hs,Vs] = ind2sub(roiDims,(1:roiDims(1)*roiDims(2))');
+porelbls = [num2str(Hs),repmat(',',numel(Hs),1),num2str(Vs)];
+figure(1)
+hold on
+fontshift = 5;
+text(porelocs2(:,1)+fontshift,porelocs2(:,2)+fontshift,porelbls,'Color','r','FontSize',14)
+hold off
 
 warning('on','all')
