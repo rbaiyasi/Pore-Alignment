@@ -11,7 +11,7 @@ function [ all_lines ] = calcParaLines( in_line , ptslist )
 stdHsepsError.message = 'Line separations not consistent';
 stdHsepsError.identifier = 'FUNCTION:inconsistentSeparations';
 %% Threshold definition
-thd_stdHseps = 4; %Arbitrary right now
+thd_stdHseps = inf; %Arbitrary right now
 
 %% Calculating line spacings
 m0 = in_line(1);
