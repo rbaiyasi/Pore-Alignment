@@ -3,7 +3,7 @@
 % Pore size is manually input here - this will probably be the last step
 clearvars
 load BF_area14_crop
-init_rad = 19;
+init_rad = 18;
 
 % load small_pores1_crop
 % init_rad = 10;
