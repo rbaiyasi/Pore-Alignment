@@ -8,6 +8,12 @@ N = size(ptlist,1);
 relr = ptlist - repmat(xy0,N,1);
 relr = relr(:,1) + 1i*relr(:,2); % convert to complex coords
 relang = wrapTo2Pi(angle(relr)); % get angle from center pixel
+% Return false for points that are too close to the center
+% reldist = abs(relr);
+% if min(reldist) < sqrt(2)
+%     closedflag = false;
+%     return
+% end
 [~,sortidx] = sort(relang);
 ptlist = ptlist(sortidx,:); % Sort coordinates by angle
 ptlist(N+1,:) = ptlist(1,:); % Add last coordinate to end for closed
