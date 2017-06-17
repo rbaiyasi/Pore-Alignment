@@ -1,12 +1,13 @@
 %% testScript 
+warning('off','all')
 %% Load Data - optional choice between large or small pores
 % Pore size is manually input here - this will probably be the last step
 clearvars
 load BF_area14_crop
-init_rad = 19;
+init_rad = 18;
 
-% load small_pores1_crop
-% init_rad = 10;
+load small_pores1_crop
+init_rad = 10;
 
 %% Determine inital pore localizations through bfPoreDetect
 [Y,X] = size(bf);
@@ -22,7 +23,7 @@ tmpnums = 1:size(porelocs,1);
 tmpnums = cellstr(num2str(tmpnums'));
 hold on
 scatter(porelocs(:,1),porelocs(:,2),50,'r');
-text(porelocs(:,1),porelocs(:,2),tmpnums,'r');
+% text(porelocs(:,1),porelocs(:,2),tmpnums,'r');
 hold off
 
 %% Get initial grid lines from gridFromLocs, then get grid points
@@ -49,83 +50,34 @@ hold off
 
 
 %% from grid intersections, get refined pore localizations
-% Needs work. It is important that there is a defined way to translate
-% refined localizations in the roi back to the final image.
-% useful values from line data
-vseps = abs((Vlines(2,2) - Vlines(2,1))/Vlines(1,1));
-hseps = abs(Hlines(2,2) - Hlines(2,1));
-% define sub-grid with middle selection of grid points
-V = size(Vlines,2) - 2;
-H = size(Hlines,2) - 2;
-if H < 2 || V < 2
-    error('Not enough grid points')
-end
-sub_grid_pts = calcGridIntersections(Hlines(:,2:end-1),Vlines(:,2:end-1));
-numgp = size(sub_grid_pts,1);
+[ extractedROIs ] = extractPoreImgsFromGrid( bf , Hlines , Vlines , 1);
 
-boxrad = floor(min(vseps,hseps)/2) - 1;
-boxsize = 2*boxrad + 1;
-clearvars img_rois
-porerois(numgp).ul = [];
-porerois(numgp).img = [];
-img_rois = zeros( boxsize , boxsize , numgp );
-uls = zeros(numgp,2);
-for k = 1:numgp
-    ul = round(sub_grid_pts(k,:) - boxrad);
-    lr = ul+boxsize - 1;
-    tmpim2 = crop(bf,ul,lr);
-    img_rois(:,:,k) = tmpim2;
-    uls(k,:) = ul;
-end
 
-mov = makeimmovie(img_rois);
+% Create movie of ROI images
+mov = makeimmovie(extractedROIs.imgs);
 % implay(mov)
 
 %% Testing pore localization through circular fitting
-[ xy0 , R ] = poreFit2Circle( img_rois );
+[ xy0 , R ] = poreFit2Circle( extractedROIs.imgs );
+
 
 % Add refined pore positions to figure(1)
-
-porelocs2 = uls + xy0 - 1;
+porelocs2 = extractedROIs.uls + xy0 - 1;
 figure(1)
 hold on
 scatter(porelocs2(:,1),porelocs2(:,2),200,'+w')
-viscircles(gca,porelocs2,R)
+viscircles(gca,porelocs2,R);
 hold off
-% CC = bwconncomp(tmpedges)
-% figure(1)
-% imagesc(tmpimg); axis image
-% setFont
-% hold on
-% for k = 1:length(B)
-%    boundary = B{k};
-%    plot(boundary(:,2), boundary(:,1), 'w', 'LineWidth', 2)
-% end
-% hold off
 
-% figure(2)
-% imagesc(tmpedges)
-% axis image
-% setFont
+%% Fit pore locs to auto-generated grid to initialize alignment
+% Number of horizontal and vertical lines
+roiDims = extractedROIs.dims;
+[Hs,Vs] = ind2sub(roiDims,(1:roiDims(1)*roiDims(2))');
+porelbls = [num2str(Hs),repmat(',',numel(Hs),1),num2str(Vs)];
+figure(1)
+hold on
+fontshift = 5;
+text(porelocs2(:,1)+fontshift,porelocs2(:,2)+fontshift,porelbls,'Color','r','FontSize',14)
+hold off
 
-% bw2 = tmpedges;
-% [Y,X] = size(tmpimg);
-% C = round(X/2);
-% midslice = bw2(:,C);
-% testregs = {};
-% cnt = 0;
-% while sum(midslice) > 0 && cnt < 1e6
-%     R = find(midslice,1);
-%     tmpbndry = bwtraceboundary(bw2,[R,C],'N');
-%     tmpinds = sub2ind([Y,X],tmpbndry(:,1),tmpbndry(:,2));
-%     bw2(tmpinds) = 0;
-%     testregs = [testregs,{tmpinds}];
-%     midslice = bw2(:,C);
-%     cnt = cnt+1;
-% end
-%  
-% sizethresh = 50;
-% currsizes = cellfun(@numel,testregs);
-% testregs = testregs(currsizes >= sizethresh);
-
-
+warning('on','all')

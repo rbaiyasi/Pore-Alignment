@@ -45,10 +45,12 @@ end
 unassignedidx = find(numinpos == 0);
 if numel(unassignedidx) > 0
     for k = 1:numel(unassignedidx)
-        NNidx.(NNidxFields{unassignedidx(k)}) = numNN + 1;
+        NNidx.(NNidxFields{unassignedidx(k)}) = numNN + k;
+        NNdist(numNN + k,:) = NaN;
+        NNang(numNN + k,:) = NaN;
     end
-    NNdist(numNN + 1) = NaN;
-    NNang(numNN + 1) = NaN;
+%     NNdist(numNN + 1,:) = NaN;
+%     NNang(numNN + 1,:) = NaN;
 end
 
 % check if any were assigned more than once, ignoring the dummy index
@@ -58,7 +60,6 @@ tmpNNidx(allNNidx == numNN + 1) = []; % remove dummy indices
 if ~isequal(unique(tmpNNidx),sort(tmpNNidx))
     error(repeatePtError);
 end
-
 %% Return Values
 NNdists = NNdist(allNNidx);
 NNangs = NNang(allNNidx);
