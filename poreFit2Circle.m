@@ -12,7 +12,7 @@ function [ xy0 , R ] = poreFit2Circle( img , varargin)
 %                       Default of 2.
 %   OUTPUT: xy0 - center of circles expressed as [x,y] row vectors.
 %           R - radii of each circular fit.
-
+minboundsize = inf; %not used right now
 %% varargin - { CannySigma , gapParam
 defargs = {sqrt(3) , 2};
 if nargin > 1
@@ -35,10 +35,16 @@ for n = 1:N
         % Find the closed boundary with the most pixels in it
         boundsize = cellfun(@numel,CC.PixelIdxList);
         boundsize = boundsize .* CC.closed;
-        [~,idx2use] = max(boundsize);
-        % Use coordinates of boundary pixels to estimate fit circle
-        [y,x] = ind2sub(CC.ImageSize,CC.PixelIdxList{idx2use});
-        [xc,yc,tmpR] = circfit(x,y);
+        [maxboundsize,idx2use] = max(boundsize);
+        if maxboundsize < minboundsize
+            xc = NaN;
+            yc = NaN;
+            tmpR = NaN;
+        else
+            % Use coordinates of boundary pixels to estimate fit circle
+            [y,x] = ind2sub(CC.ImageSize,CC.PixelIdxList{idx2use});
+            [xc,yc,tmpR] = circfit(x,y);
+        end
     else % if there are no closed boundaries, return NaNs
         xc = NaN;
         yc = NaN;
