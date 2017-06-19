@@ -1,4 +1,4 @@
-function [ pore_locs , nn_seprange ] = afmPoreDetect( img_AFM )
+function [ pore_locs , nn_seprange , CC ] = afmPoreDetect( img_AFM )
 %bfPoreDetect Uses input afm image and to pick out the most obvious pores 
 %and return their locations.
 %   INPUT:  img_AFM - cropped afm image
