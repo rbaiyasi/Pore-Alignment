@@ -5,7 +5,7 @@ function [ pore_locs , nn_seprange ] = afmPoreDetect( img_AFM )
 %   OUTPUT: pore_locs - estimated pore centers for pores picked out by
 %               convolution listed as [x,y] row vectors
 
-boundimg = edge(img_AFM,'Canny' , [] , sqrt(2));
+boundimg = edge(img_AFM , 'Canny' , [] , sqrt(2));
 CC = bwconncomp(boundimg);
 blankimg = zeros(CC.ImageSize);
 porelocs1 = zeros(CC.NumObjects,2);
@@ -17,7 +17,7 @@ for k = 1:CC.NumObjects
     if numel(CC.PixelIdxList{k}) < 10
         CC.closed(k) = false;
     else
-        CC.closed(k) = isClosedPointsAboutCenter([tmpx,tmpy],cpx);
+        CC.closed(k) = isClosedPointsAboutCenter([tmpx,tmpy],cpx,8);
     end
     porelocs1(k,:) = cpx;
 end

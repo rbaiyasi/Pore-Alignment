@@ -33,7 +33,7 @@ for k = 1:CC.NumObjects
     if numel(CC.PixelIdxList{k}) < 10
         CC.closed(k) = false;
     else
-        CC.closed(k) = isClosedPointsAboutCenter([tmpx,tmpy],cpx);
+        CC.closed(k) = isClosedPointsAboutCenter([tmpx,tmpy],cpx,18);
     end
     porelocs1(k,:) = cpx;
 end
