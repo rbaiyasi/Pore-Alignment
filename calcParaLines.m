@@ -9,7 +9,7 @@ function [ all_lines ] = calcParaLines( in_line , ptslist )
 %               of form [slope;intercept]. All slopes will be equal.
 %% Error Codes
 stdHsepsError.message = 'Line separations not consistent';
-stdHsepsError.identifier = 'FUNCTION:inconsistentSeparations';
+stdHsepsError.identifier = 'pores:calcParaLines:inconsistentSeparations';
 %% Threshold definition
 thd_stdHseps = inf; %Arbitrary right now
 

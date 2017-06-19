@@ -10,9 +10,10 @@ function [ NNdists , NNangs , resortIdx ] = getNNparams( centerpt, ptslist )
 %               assigned to each missing point.
 %% Error Codes
 repeatPtError.message = 'A nearest-neigbor has been sorted into two positions';
-toomanyinPtError.message = 'More than one nearest-neighbor has been assigned to one position';
+tooManyInPtError.message = 'More than one nearest-neighbor has been assigned to one position';
+tooManyInPtError.identifier = 'pores:getNNparams:tooManyInPt';
 nnMissortedError.message = 'Nearest-neighbor sorting mis-match. Ensure grid array is not be tilted 45 degrees.';
-nnMissortedError.identifier = 'MATLAB:nnMissorted';
+nnMissortedError.identifier = 'pores:getNNparams:nnMissorted';
 
 %% Setting up points for analysis
 numNN = size(ptslist,1);
@@ -38,7 +39,7 @@ NNidx.d = find(imag(NNdisps) < 0 & abs(real(NNdisps)) < abs(imag(NNdisps)));
 % check how many pts were assigned to each NN position
 numinpos = structfun(@numel,NNidx);
 if max(numinpos) > 1
-    error(toomanyinPtError)
+    error(tooManyInPtError)
 end
 
 % if one of the NN positions was not filled, assign it a dummy index
