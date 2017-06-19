@@ -16,14 +16,22 @@ sortsepmat = sort(sepmat,1);
 minseps = sortsepmat(1,:);
 % Using median of distributed minimum steps and 0.10 of the median as the
 % standard deviation to extract appropriate points.
-mu3 = median(minseps);
+[~,sortIdx] = sort(minseps);
+medianIdx = sortIdx(round(N/2));
+mu3 = minseps(medianIdx);
 sig3 = 0.1*mu3;
 std_fact = 1;
-
 mu = mu3;
 sig = sig3;
-nnmat = sum(abs(sepmat-mu) <= std_fact*sig);
-pts2keep = nnmat > 1; % needs at least two nearest neighbors;
+
+% Pick out angle between nearest neighbors
+% nnmat = abs(sepmat-mu) <= std_fact*sig;
+% activeNNs = dispmat(nnmat);
+% activeAngs = angle(activeNNs);
+% anglestates = stasiAnalysisR(activeAngs');
+% anglestates.num_levels
+nnvect = sum(abs(sepmat-mu) <= std_fact*sig);
+pts2keep = nnvect > 1; % needs at least two nearest neighbors;
 %% Return
 outptlist = ptlist(pts2keep,:);
 filterParams.mu = mu;
