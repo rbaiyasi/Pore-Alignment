@@ -46,10 +46,10 @@ img_AFM = mean(img_AFM,3);
 
 
 %% get NN_seprange
-nn_seprange = getNNseprange(porelocs1,[],3);
+% nn_seprange = getNNseprange(porelocs1,[],3);
 % Filter out bad points
-nnmu = mean(nn_seprange);
-nnrng = nnmu-nn_seprange(1);
+% nnmu = mean(nn_seprange);
+% nnrng = nnmu-nn_seprange(1);
 %use filterParams instead
 nnmu = filterParams.mu;
 nnrng = filterParams.sigma;

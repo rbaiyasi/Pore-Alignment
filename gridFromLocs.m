@@ -35,6 +35,7 @@ for k = 1:N % Loop over each pore localization
             size(ptslist)
             try %try again
                 [NNdists(:,k),NNangs(:,k)] = getNNparams(centerpt,ptslist);
+                disp('Succeeded')
             catch ME2
                 if strcmp(ME2.identifier,'pores:getNNparams:tooManyInPt')
                     NNdists(:,k) = NaN;
@@ -43,7 +44,7 @@ for k = 1:N % Loop over each pore localization
                     error(ME2)
                 end
             end
-            disp('Succeeded')
+            
         else
             error(ME)
         end
