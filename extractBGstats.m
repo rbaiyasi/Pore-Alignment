@@ -17,6 +17,8 @@ for k = 1:maxiter
         final_iteration = k-1;
         mu = newmean;
         sigma = newstd;
+%         sum(keepids)
+%         k
         return
     else
         oldmean = newmean;
