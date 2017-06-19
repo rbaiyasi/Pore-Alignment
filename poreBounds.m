@@ -79,8 +79,8 @@ for k = 1:CC.NumObjects
     N = numel(tmpx);
     cpx = round(CC.ImageSize/2); % center pixel
     CC.closed(k) = isClosedPointsAboutCenter([tmpx,tmpy],cpx,gapParam);
+    closedflags(k) = CC.closed(k);
 end
-closedflags = CC.closed;
 if sum(closedflags) == 0
     warning(noclosedError.message)
 %     error(noclosedError);

@@ -31,6 +31,9 @@ for n = 1:N
     % Get the pore boundaries with initial filtering
     [ bw1 , CC ] = poreBounds(im1 , CannySigma);
     % Choose the largest closed boundary to continue
+    if ~isfield(CC,'closed')
+        CC.closed = 0;
+    end
     if sum(CC.closed) > 0
         % Find the closed boundary with the most pixels in it
         boundsize = cellfun(@numel,CC.PixelIdxList);

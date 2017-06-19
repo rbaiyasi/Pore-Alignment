@@ -28,12 +28,21 @@ for k = 1:N % Loop over each pore localization
         [NNdists(:,k),NNangs(:,k)] = getNNparams(centerpt,ptslist);
     catch ME % If multiple points were assigned to position, remove one
         if strcmp(ME.identifier,'pores:getNNparams:tooManyInPt')
-            disp(['Iteration ', num2str(k)'])
+            disp(['Iteration ', num2str(k)])
             tmpdisps = ptslist - repmat(centerpt,size(ptslist,1),1);
             tmpdisps = sum(tmpdisps.^2,2);
             ptslist((tmpdisps - nnmu) < nnrange/2 , :) = [];
             size(ptslist)
-            [NNdists(:,k),NNangs(:,k)] = getNNparams(centerpt,ptslist);
+            try %try again
+                [NNdists(:,k),NNangs(:,k)] = getNNparams(centerpt,ptslist);
+            catch ME2
+                if strcmp(ME2.identifier,'pores:getNNparams:tooManyInPt')
+                    NNdists(:,k) = NaN;
+                    NNangs(:,k) = NaN;
+                else
+                    error(ME2)
+                end
+            end
             disp('Succeeded')
         else
             error(ME)
