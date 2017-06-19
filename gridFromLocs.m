@@ -24,7 +24,21 @@ NNangs = zeros(4,N);
 for k = 1:N % Loop over each pore localization
     centerpt = porelocs(k,:);
     ptslist = porelocs(find(nnBinary(:,k)),:);
-    [NNdists(:,k),NNangs(:,k)] = getNNparams(centerpt,ptslist);
+    try % Try to find nearest neighbors with auto ptslist
+        [NNdists(:,k),NNangs(:,k)] = getNNparams(centerpt,ptslist);
+    catch ME % If multiple points were assigned to position, remove one
+        if strcmp(ME.identifier,'pores:getNNparams:tooManyInPt')
+            disp(['Iteration ', num2str(k)'])
+            tmpdisps = ptslist - repmat(centerpt,size(ptslist,1),1);
+            tmpdisps = sum(tmpdisps.^2,2);
+            ptslist((tmpdisps - nnmu) < nnrange/2 , :) = [];
+            size(ptslist)
+            [NNdists(:,k),NNangs(:,k)] = getNNparams(centerpt,ptslist);
+            disp('Succeeded')
+        else
+            error(ME)
+        end
+    end
 end
 NNang = nanmean(NNangs,2);
 
