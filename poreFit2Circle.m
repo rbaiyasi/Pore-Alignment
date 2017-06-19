@@ -4,19 +4,22 @@ function [ xy0 , R ] = poreFit2Circle( img , varargin)
 %circular region about the origin. If there are no closed regions, will
 %return NaN for center coordinates and radii.
 %   INPUT:  img - 2D image (or 3D stack of images).
-%           varargin - {CannySigma,
-%                    CannySigma - standard deviation of the Gaussian filter
-%                    used in the Canny filter. Defaults to sqrt(3).
+%           varargin - { CannySigma , gapParam
+%                   CannySigma - standard deviation of the Gaussian filter
+%                       used in the Canny filter. Defaults to sqrt(3).
+%                   gapParam - square of the largest separation allowed
+%                       between 2 pixels when determining 'closedness'.
+%                       Default of 2.
 %   OUTPUT: xy0 - center of circles expressed as [x,y] row vectors.
 %           R - radii of each circular fit.
 
-%% varargin - { CannySigma ,
-defargs = {sqrt(3)};
+%% varargin - { CannySigma , gapParam
+defargs = {sqrt(3) , 2};
 if nargin > 1
     arginds = find(~cellfun(@isempty,varargin));
     defargs(arginds) = varargin(arginds);
 end
-[CannySigma] = defargs{:};
+[CannySigma , gapParam] = defargs{:};
 
 %% Main Loop
 [ Y , X , N ] = size(img);
