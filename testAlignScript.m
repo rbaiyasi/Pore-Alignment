@@ -92,7 +92,7 @@ mov = makeimmovie(extractedROIs.imgs);
 % implay(mov)
 
 %% Testing pore localization through circular fitting
-[ xy0 , R ] = poreFit2Circle( extractedROIs.imgs );
+[ xy0 , R ] = poreFit2Circle( extractedROIs.imgs , [] , 2 );
 
 
 % Add refined pore positions to figure(1)
