@@ -12,7 +12,7 @@ function [ xy0 , R ] = poreFit2Circle( img , varargin)
 %                       Default of 2.
 %   OUTPUT: xy0 - center of circles expressed as [x,y] row vectors.
 %           R - radii of each circular fit.
-minboundsize = inf; %not used right now
+minboundsize = 0; %not used right now
 %% varargin - { CannySigma , gapParam
 defargs = {sqrt(3) , 2};
 if nargin > 1
