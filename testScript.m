@@ -6,7 +6,7 @@ clearvars
 load BF_area14_crop
 init_rad = 18;
 
-% load small_pores1_crop
+load small_pores1_crop
 % init_rad = 10;
 
 init_rad = round(porePicker(bf));
