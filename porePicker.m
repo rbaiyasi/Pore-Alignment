@@ -41,6 +41,7 @@ while ~valid_initpore
         clearvars Rs
     end
 end
+delete(rh)
 % disp(['Estimated radius: ', num2str(Rs)])
 %% Main body
 switch imagemode
