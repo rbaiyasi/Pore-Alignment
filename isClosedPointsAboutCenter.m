@@ -33,10 +33,10 @@ else
 end
 
 %% adding in a regularity of circle parameter
-thd_fact = 0.25; % fraction of the mean that the std is allowed to be
-if closedflag
-    relmag = abs(relr);
-    if std(relmag) > thd_fact*mean(relmag)
-        closedflag = false;
-    end
-end
+% thd_fact = 0.25; % fraction of the mean that the std is allowed to be
+% if closedflag
+%     relmag = abs(relr);
+%     if std(relmag) > thd_fact*mean(relmag)
+%         closedflag = false;
+%     end
+% end
