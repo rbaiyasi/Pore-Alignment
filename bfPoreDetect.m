@@ -49,7 +49,7 @@ BF = bf - bg;
 convim = conv2(BF,img_test1); % Convolve first time
 convim = wkeep(convim,size(BF)); % Trim down size
 % Extract local maxima of the image
-[ lm_idx,~ ] = find_locmax( convim ,round(rad1*2) , 'none' );
+[ lm_idx,~ ] = find_locmax( convim ,round(rad1*2) , 0.35 );
 % INITIAL PORE LOCATIONS
 [lm_row,lm_col] = ind2sub(size(BF),lm_idx);
 init_pore_locs = [lm_col,lm_row];
