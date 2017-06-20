@@ -1,4 +1,4 @@
-function [ pore_locs , nn_seprange ] = bfPoreDetect( img_bf , rad_est )
+function [ pore_locs , nn_seprange , init_pore_locs ] = bfPoreDetect( img_bf , rad_est )
 %bfPoreDetect Uses input brightfield image and an estimated pore outer
 %radius to pick out the most obvious pores and return their locations
 %   INPUT:  img_bf - cropped brightfield image
@@ -52,6 +52,7 @@ convim = wkeep(convim,size(BF)); % Trim down size
 [ lm_idx,~ ] = find_locmax( convim ,round(rad1*2) , 'none' );
 % INITIAL PORE LOCATIONS
 [lm_row,lm_col] = ind2sub(size(BF),lm_idx);
+init_pore_locs = [lm_col,lm_row];
 
 %% Create img_test2 for location refinement
 % Prepare to loop over local maxima to extract images
