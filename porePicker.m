@@ -56,6 +56,7 @@ if strcmp(inkey,'return')
 end
 
 function [ validflag , R ] = isValidPore(img)
-[ xy0 , R ] = poreFit2Circle( img );
+gapParam = 2*3^2;
+[ xy0 , R ] = poreFit2Circle( img , [] , gapParam);
 % valid unless all of them are nan
 validflag = ~isequal(sum(isnan(R)),numel(R));
