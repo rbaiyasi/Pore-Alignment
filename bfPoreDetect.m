@@ -49,7 +49,7 @@ BF = bf - bg;
 convim = conv2(BF,img_test1); % Convolve first time
 convim = wkeep(convim,size(BF)); % Trim down size
 % Extract local maxima of the image
-[ lm_idx,~ ] = find_locmax( convim ,rad1*2 , 'none' );
+[ lm_idx,~ ] = find_locmax( convim ,round(rad1*2) , 'none' );
 % INITIAL PORE LOCATIONS
 [lm_row,lm_col] = ind2sub(size(BF),lm_idx);
 
@@ -91,7 +91,7 @@ img_test2 = mean(roi_im(:,:,1:num2keep),3);
 %% convolve with brightfield image to get second-pass pore locations
 convim2 = conv2(BF,img_test2);
 convim2 = wkeep(convim2,size(BF)); % trim down to size(BF)
-[ lm_idx2,lm_ints2 ] = find_locmax( convim2 ,rad1*2 , 'none' );
+[ lm_idx2,lm_ints2 ] = find_locmax( convim2 ,round(rad1*2) , 'none' );
 
 % X,Y COORDS FOR SECOND-PASS LOCALIZATIONS
 % [ys1,xs1] = ind2sub(size(BF),lm_idx);
