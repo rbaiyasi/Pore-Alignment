@@ -61,8 +61,11 @@ for k = 1:numel(lm_row)
     ul = [lm_col(k),lm_row(k)] - boxrad;
     lr = [lm_col(k),lm_row(k)] + boxrad;
     % only add image to stack if it is far enough from edges
-    if sum(ul>=1) + sum(lr<=size(BF,1))==4
-        roi_im(:,:,k) = crop(BF,ul,lr);
+    cropim = crop(BF,ul,lr);
+%     if sum(ul>=1) + sum(lr<=size(BF,1)-1)==4
+    if isequal(size(cropim),[boxres,boxres])
+        roi_im(:,:,k) = cropim;
+%         roi_im(:,:,k) = crop(BF,ul,lr);
         inds2use = [inds2use,k];
     else
         roi_im(:,:,k) = zeros(boxres);
