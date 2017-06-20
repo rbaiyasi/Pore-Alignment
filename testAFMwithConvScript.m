@@ -10,6 +10,7 @@ ul_AFM = [69,73];
 lr_AFM = [1092,1096];
 img_AFM = crop(img_AFM,ul_AFM,lr_AFM);
 img_AFM = mean(img_AFM,3);
+img_AFM = img_AFM-mean(img_AFM(:));
 
 
 [aY,aX] = size(img_AFM);
@@ -46,16 +47,26 @@ img_test1 = img_test1 * -1; %invert since it is negative down
 
 bg = imopen(img_AFM,strel('disk',round(rad1*10)));
 img_AFM2 = img_AFM - bg;
+img_AFM2 = img_AFM;
 convim1 = conv2(img_AFM2,img_test1); % Convolve first time
 convim1 = wkeep(convim1,size(img_AFM)); % Trim down size
-lminds = find_locmax(convim1,round(rad1/2),0.5);
+lminds = find_locmax(convim1,round(rad1),'none');
 [ys,xs] = ind2sub(size(img_AFM),lminds);
+porelocsC = [xs,ys];
+bb = 20;
+near_border = (porelocsC(:,1) < 1+bb) | (porelocsC(:,1) > aX-bb) ...
+    |(porelocsC(:,2) < 1+bb) | (porelocsC(:,2) > aY-bb);
+porelocsC = porelocsC(~near_border,:);
 %% view Filter results
 figure(1)
 imagesc(img_AFM);
 axis image
 hold on
-scatter(xs,ys,50,'+k')
+scatter(porelocsC(:,1),porelocsC(:,2),50,'+w')
+hold off
+porelocsC2 = filterByNN(porelocsC);
+hold on
+scatter(porelocsC2(:,1),porelocsC2(:,2),'or')
 hold off
 % init_porelocs = pore_locs;
 % final_porelocs = porelocs1;
