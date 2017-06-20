@@ -1,4 +1,4 @@
-function [ Rs ] = porePicker( dataOrFig , imagemode )
+function [ Rs ] = porePicker( dataOrAx , imagemode )
 %porePicker With an input image or figure with image, pick out a region
 %with a pore and use it to find other pores in the image.
 %   INPUT:  dataOrFig
@@ -9,14 +9,14 @@ IMAGEMODES = {'AFM','BF'};
 if nargin < 2
     imagemode = IMAGEMODES{1};
 end
-if isgraphics(dataOrFig(1),'figure')
-    fig1 = dataOrFig;
-    ax1 = fig1.CurrentAxes;
+if isgraphics(dataOrAx(1),'axes')
+    ax1 = dataOrAx;
+    fig1 = ax1.Parent;
     childs = allchild(ax1);
     imh = childs(find(isgraphics(childs,'Image'),1));
     Data1 = imh.CData;
-elseif isnumeric(dataOrFig(1))
-    Data1 = dataOrFig;
+elseif isnumeric(dataOrAx(1))
+    Data1 = dataOrAx;
     fig1 = figure;
     ax1 = axes;
     imh = imagesc(Data1,'Parent',ax1);
