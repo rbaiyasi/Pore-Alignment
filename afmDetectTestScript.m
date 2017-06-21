@@ -6,11 +6,9 @@ if ~afmFileName
 end
 img_afm = imread([PathName,afmFileName]);
 img_afm = mean(img_afm,3);
-ul_afm = [69,73];
+ul_afm = [104,73];
 lr_afm = [1092,1096];
 img_afm_crop = crop(img_afm,ul_afm,lr_afm);
-img_afm_crop = img_afm_crop'; % transpose for lining up
-img_afm = img_afm';
 
 fig1 = figure(1);
 imh = imagesc(img_afm_crop); axis image off
@@ -37,7 +35,9 @@ setFont(16)
 % rad_est = 39; %15 FAIL
 % rad_est = 25; %16
 rad_est = porePicker(ax1)
-[afmporelocs1, radii_afm, metric_afm] = imfindcircles(img_afm_crop,...
+I2 = img_afm_crop;
+% I2 = imtophat(img_afm_crop,strel('disk',round(rad_est*3)));
+[afmporelocs1, radii_afm, metric_afm] = imfindcircles(I2,...
     round(rad_est + [-1,1]*8),'ObjectPolarity','dark');
 porelocs1 = afmporelocs1;
 N = size(porelocs1,1);
