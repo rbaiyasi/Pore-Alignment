@@ -14,8 +14,8 @@ img_afm = mean(img_afm,3);
 ul_afm = [69,73];
 lr_afm = [1092,1096];
 img_afm_crop = crop(img_afm,ul_afm,lr_afm);
-img_afm_crop = img_afm_crop'; % transpose for lining up
-img_afm = img_afm';
+img_afm_crop = img_afm_crop; % transpose for lining up
+img_afm = img_afm;
 [bfFileName , PathName] = uigetfile('BF_*.tif','Choose BF image',bfPath);
 if ~bfFileName
     error('No AFM selected');
