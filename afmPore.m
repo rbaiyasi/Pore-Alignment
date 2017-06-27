@@ -37,12 +37,12 @@ switch actionName
         
     case 'extract'
         tagnames = TAGS([2,4]);
-        ss(1) = findobj(allchild(gca),'Tag',tagnames{1});
-        ss(2) = findobj(allchild(gca),'Tag',tagnames{2});
-        porelocs = [ss(1).XData;ss(1).YData]';
+        ss1 = findobj(allchild(gca),'Tag',tagnames{1});
+        ss2 = findobj(allchild(gca),'Tag',tagnames{2});
+        porelocs = [ss1.XData;ss1.YData]';
         assignin('base','porelocs',porelocs);
-        if ~isempty(ss(2))
-            gridlocs = [ss(2).XData;ss(2).YData]';
+        if ~isempty(ss2)
+            gridlocs = [ss2.XData;ss2.YData]';
             assignin('base','gridlocs',gridlocs)
         end
     % find circles can take a varargin of pore size, or use porePicker to
@@ -103,5 +103,15 @@ switch actionName
         end
         ss2 = scatter(gridpts(:,1),gridpts(:,2),'+k','Tag',TAGS{4});
         hold off
-
+        
+%     case 'refinelocs'
+%         lls = findobj(allchild(gca),'Tag',TAGS{3}); %get lines
+%         for l = 1:numel(lls)
+%             ll = lls(l);
+%             ys = ll.YData;
+%             xs = ll.XData;
+%             m = (ys(2)-ys(1))/(xs(2)-xs(1));
+%             r0 = [xs(1),ys(1)];
+%             
+    
 end    
