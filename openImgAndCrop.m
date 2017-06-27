@@ -24,14 +24,20 @@ img.BF = mean(tmpimg,3);
 figure(1)
 subplot(1,2,1)
 imagesc(img.AFM); axis image
+ax.AFM = gca;
 subplot(1,2,2)
 imagesc(img.BF); axis image
+ax.BF = gca;
 
 for k = 1:numel(PFXS)
     Data0 = img.(PFXS{k});
     fig = cropPreviewGUI(Data0);
     uiwait(fig);
     [Data1,ul,lr] = crop(Data0,ul,lr);
+    axes(ax.(PFXS{k}))
+    rectpos = [ul,lr-ul+1];
+    rectangle('Position',rectpos);
     savename = [PFXS{k},delim1,filename,delim1,'analysis'];
+    [savename,savepath] = uiputfile('*.mat','Save as...',[savepath,savename]);
     save([savepath,savename],vars2save{:});
 end

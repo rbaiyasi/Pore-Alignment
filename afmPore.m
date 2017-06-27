@@ -130,7 +130,7 @@ switch actionName
         hlog = alllines(1,:) == hslope;
         Hlines = alllines(:,hlog);
         Vlines = alllines(:,~hlog);
-        [ extractedROIs ] = extractPoreImgsFromGrid( Data1 , Hlines , Vlines , 1);
+        [ extractedROIs ] = extractPoreImgsFromGrid( Data1 , Hlines , Vlines , varargin{:});
         [ xy0 , R ] = poreFit2Circle( extractedROIs.imgs );
         porelocs2 = extractedROIs.uls + xy0 - 1;
         % delete old objects
