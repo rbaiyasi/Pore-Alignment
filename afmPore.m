@@ -104,14 +104,23 @@ switch actionName
         ss2 = scatter(gridpts(:,1),gridpts(:,2),'+k','Tag',TAGS{4});
         hold off
         
-%     case 'refinelocs'
-%         lls = findobj(allchild(gca),'Tag',TAGS{3}); %get lines
-%         for l = 1:numel(lls)
-%             ll = lls(l);
-%             ys = ll.YData;
-%             xs = ll.XData;
-%             m = (ys(2)-ys(1))/(xs(2)-xs(1));
-%             r0 = [xs(1),ys(1)];
-%             
+    case 'refinelocs'
+        % recover lines
+        lls = findobj(allchild(gca),'Tag',TAGS{3}); %get lines
+        for l = 1:numel(lls)
+            ll = lls(l);
+            ys = ll.YData;
+            xs = ll.XData;
+            m = (ys(2)-ys(1))/(xs(2)-xs(1));
+            roundfact = 1e6; %round so that slopes match
+            m = round(m*roundfact)/roundfact;
+            r0 = [xs(1),ys(1)];
+            b = ptslopeform(m,r0);
+            alllines(:,l) = [m;b];
+        end
+        hslope = min(unique(alllines(1,:)));
+        hlog = alllines(1,:) == hslope;
+        Hlines = alllines(:,hlog);
+        Vlines = alllines(:,~hlog);
     
 end    
