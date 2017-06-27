@@ -60,7 +60,7 @@ switch actionName
         rad_srch_rng = 5;
         disp(['Radius search for ',num2str(rad_est),' plus/minus ',num2str(rad_srch_rng)])
         [porelocs1, radii_afm, metric_afm] = imfindcircles(Data1,...
-        round(rad_est + [-1,1]*rad_srch_rng),'ObjectPolarity','dark');
+        round(max((rad_est + [-1,1]*rad_srch_rng),1)),'ObjectPolarity','dark');
         N = size(porelocs1,1);
         % delete old objects
         vv = findobj(allchild(gca),'Tag',TAGS{1});
@@ -81,6 +81,10 @@ switch actionName
         ss = findobj(allchild(gca),'Tag',TAGS{2});
         porelocs1 = [ss.XData;ss.YData]'; % get locs from figure
         nn_seprange = getNNseprange(porelocs1,varargin{:});
+        % I don't think that the nearest neighbor separation works as
+        % written. So, using 1/10th of the separation to give the spacing.
+        nn_seprange = mean(nn_seprange);
+        nn_seprange = [-1,1]*0.1*nn_seprange + nn_seprange;
         [Hlines , Vlines] = gridFromLocs( porelocs1 , nn_seprange );
         gridpts = calcGridIntersections(Hlines,Vlines);
         % delete old grid lines

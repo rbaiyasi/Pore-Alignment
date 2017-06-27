@@ -11,7 +11,7 @@ if ~afmFileName
 end
 img_afm = imread([PathName,afmFileName]);
 img_afm = mean(img_afm,3);
-ul_afm = [69,73];
+ul_afm = [104,73];
 lr_afm = [1092,1096];
 img_afm_crop = crop(img_afm,ul_afm,lr_afm);
 img_afm_crop = img_afm_crop; % transpose for lining up
