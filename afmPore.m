@@ -1,7 +1,7 @@
 function [ output_args ] = afmPore( dataOrAx , actionName , varargin)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
-TAGS = {'RedCircles','CurrentLocs','GridLines','GridPoints'};
+TAGS = {'RedCircles','CurrentLocs','GridLines','GridPoints','InitLocs'};
 %% Format inputs
 if isgraphics(dataOrAx(1),'axes')
     ax1 = dataOrAx;
@@ -18,6 +18,9 @@ elseif isnumeric(dataOrAx(1))
     setFont(14)
 end
 [Y,X] = size(Data1);
+if nargin < 2
+    actionName = 'findcircs';
+end
 %% Main switch statement
 switch actionName
     case 'hide'
@@ -107,6 +110,7 @@ switch actionName
     case 'refinelocs'
         % recover lines
         lls = findobj(allchild(gca),'Tag',TAGS{3}); %get lines
+        alllines = zeros(2,numel(lls));
         for l = 1:numel(lls)
             ll = lls(l);
             ys = ll.YData;
@@ -122,5 +126,14 @@ switch actionName
         hlog = alllines(1,:) == hslope;
         Hlines = alllines(:,hlog);
         Vlines = alllines(:,~hlog);
-    
+        [ extractedROIs ] = extractPoreImgsFromGrid( Data1 , Hlines , Vlines , 1);
+        [ xy0 , R ] = poreFit2Circle( extractedROIs.imgs );
+        porelocs2 = extractedROIs.uls + xy0 - 1;
+        % delete old objects
+        ss1 = findobj(allchild(gca),'Tag',TAGS{2});
+        ss1.Tag = TAGS{5};
+        axes(ax1)
+        hold on
+        ss3 = scatter(porelocs2(:,1),porelocs2(:,2),50,'+w','Tag',TAGS{2});
+        hold off
 end    
