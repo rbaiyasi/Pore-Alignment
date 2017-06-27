@@ -55,6 +55,12 @@ NNang = nanmean(NNangs,2);
 %% Calculating lines
 % Calculate slope and intercept for first horizontal and vertical line
 kk = find(numnn==4,1); % Use first pore with 4 nearest neighbors as point
+if isempty(kk)
+    kk = find(numnn==3,1);
+end
+if isempty(kk)
+    error('No point has at least 3 nearest neighbors');
+end
 Hslope = cot(-mean(NNang(1:2)));
 Hint = ptslopeform(Hslope,porelocs(kk,:));
 Vslope = cot(-mean(NNang(3:4)));
