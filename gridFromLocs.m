@@ -7,6 +7,11 @@ function [ hLines , vLines ] = gridFromLocs( porelocs , nn_seprange )
 %               neighbors from the rif-raf.
 %   OUTPUT: hLines(vLines) - the sets of parallel lines that are close to
 %               horizontal(vertical) to initialize the grid.
+nanpts = isnan(porelocs(:,1)+porelocs(:,2));
+if sum(nanpts) > 0
+    disp('Removing placeholder points')
+    porelocs = porelocs(~nanpts,:);
+end
 N = size(porelocs,1); % number of localizations
 % Get displacements and expected nearest-neighbors distance range
 dispmat = genDispmat( porelocs );
