@@ -19,6 +19,7 @@ end
 dispmat = genDispmat(ptslist);
 % Use the nearest-neigbor of each candidate to estimate pore spacing 
 minvals = min(dispmat);
+minvals = minvals(~isnan(minvals)); % eliminate nan points
 [mu1,std1] = extractBGstats(minvals,std_fact);
 nn_seprange = [-1,1]*nnstd_fact*std1 + mu1;
 
