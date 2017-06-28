@@ -48,6 +48,25 @@ switch actionName
             gridlocs = [ss2.XData;ss2.YData]';
             assignin('base','gridlocs',gridlocs)
         end
+        % recover lines
+        lls = findobj(allchild(gca),'Tag',TAGS{3}); %get lines
+        alllines = zeros(2,numel(lls));
+        for l = 1:numel(lls)
+            ll = lls(l);
+            ys = ll.YData;
+            xs = ll.XData;
+            m = (ys(2)-ys(1))/(xs(2)-xs(1));
+            roundfact = 1e6; %round so that slopes match
+            m = round(m*roundfact)/roundfact;
+            r0 = [xs(1),ys(1)];
+            b = ptslopeform(m,r0);
+            alllines(:,l) = [m;b];
+        end
+        hslope = min(unique(alllines(1,:)));
+        hlog = alllines(1,:) == hslope;
+        nRows = sum(hlog);
+        nCols = sum(~hlog);
+        assignin('base','griddims',[nRows,nCols]);
     % find circles can take a varargin of pore size, or use porePicker to
     % get the value of the radius
     case 'findcircs'
@@ -136,6 +155,7 @@ switch actionName
         % delete old objects
         ss1 = findobj(allchild(gca),'Tag',TAGS{2});
         ss1.Tag = TAGS{5};
+        uistack(ss1,'bottom')
         axes(ax1)
         hold on
         ss3 = scatter(porelocs2(:,1),porelocs2(:,2),50,'+w','Tag',TAGS{2});
