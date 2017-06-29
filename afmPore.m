@@ -155,9 +155,10 @@ switch actionName
         % delete old objects
         ss1 = findobj(allchild(gca),'Tag',TAGS{2});
         ss1.Tag = TAGS{5};
-        uistack(ss1,'bottom')
+%         uistack(ss1,'bottom')
         axes(ax1)
         hold on
         ss3 = scatter(porelocs2(:,1),porelocs2(:,2),50,'+w','Tag',TAGS{2});
+        uistack(ss3,'top');
         hold off
 end    
