@@ -31,6 +31,10 @@ ax.BF = gca;
 
 for k = 1:numel(PFXS)
     Data0 = img.(PFXS{k});
+    if strcmp(PFXS{k},'AFM') % Need to downsample afm at this point
+        Data0(:,2:2:end) = [];
+        Data0(2:2:end,:) = [];
+    end
     fig = cropPreviewGUI(Data0);
     uiwait(fig);
     [Data1,ul,lr] = crop(Data0,ul,lr);
