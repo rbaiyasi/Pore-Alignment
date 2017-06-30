@@ -7,8 +7,9 @@ load BF_area14_crop
 init_rad = 18;
 
 load small_pores1_crop
-init_rad = 10;
+% init_rad = 10;
 
+init_rad = round(porePicker(bf));
 %% Determine inital pore localizations through bfPoreDetect
 [Y,X] = size(bf);
 [ porelocs , nn_seprange ] = bfPoreDetect(bf,init_rad);

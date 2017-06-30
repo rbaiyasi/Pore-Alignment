@@ -9,7 +9,7 @@ function [ all_lines ] = calcParaLines( in_line , ptslist )
 %               of form [slope;intercept]. All slopes will be equal.
 %% Error Codes
 stdHsepsError.message = 'Line separations not consistent';
-stdHsepsError.identifier = 'FUNCTION:inconsistentSeparations';
+stdHsepsError.identifier = 'pores:calcParaLines:inconsistentSeparations';
 %% Threshold definition
 thd_stdHseps = inf; %Arbitrary right now
 
@@ -28,8 +28,8 @@ stasiH = stasiAnalysisR(ydisps');
 % Hlevels currently assumed to include all rows - needs to be tested
 Hlevels = stasiH.levels;
 Hseps = Hlevels(2:end) - Hlevels(1:end-1);
-
-Hoffset = mean(Hseps);
+% Hseps
+Hoffset = median(Hseps);
 % Use threshold to ensure the lines are close enough together to warrent
 % using the mean as a line spacing parameter.
 if std(Hseps) > thd_stdHseps

@@ -2,20 +2,23 @@ function [ boundimg , CC ] = poreBounds( im , varargin )
 %poreBounds Uses Canny edge detection and common-sense filtering to extract
 %pore boundaries
 %   INPUT:  im - input image.
-%           varargin - { CannySigma ,
+%           varargin - { CannySigma , gapParam
 %                   CannySigma - standard deviation of the Gaussian filter
 %                       used in the Canny filter. Defaults to sqrt(2).
+%                   gapParam - square of the largest separation allowed
+%                       between 2 pixels when determining 'closedness'.
+%                       Default of 2.
 %% Error Codes
 noclosedError.identifier = 'pores:poreBounds:noClosedEdges';
 noclosedError.message = 'No edges approximate closed circles about the origin';
 
-%% varargin - { CannySigma ,
-defargs = {sqrt(2)};
+%% varargin - { CannySigma , gapParam
+defargs = {sqrt(2) , 2};
 if nargin > 1
     arginds = find(~cellfun(@isempty,varargin));
     defargs(arginds) = varargin(arginds);
 end
-[CannySigma] = defargs{:};
+[CannySigma , gapParam] = defargs{:};
 %% Initial edge detection
 [Y,X] = size(im);
 if ~isnan(im(1))
@@ -75,24 +78,8 @@ for k = 1:CC.NumObjects
     [tmpy,tmpx] = ind2sub(CC.ImageSize,CC.PixelIdxList{k});
     N = numel(tmpx);
     cpx = round(CC.ImageSize/2); % center pixel
-    tmpr = [tmpx,tmpy]; % pixel coordinates
-    relr = tmpr - repmat(cpx,N,1);
-    relr = relr(:,1) + 1i*relr(:,2); % convert to complex coords
-    relang = wrapTo2Pi(angle(relr)); % get angle from center pixel
-    [~,sortidx] = sort(relang);
-    tmpr = tmpr(sortidx,:); % Sort coordinates by angle
-    tmpr(N+1,:) = tmpr(1,:); % Add last coordinate to end for closed
-    % Calculate distances between all adjacent points
-    tmpdisp = tmpr(2:end,:) - tmpr(1:end-1,:);
-    tmpdisp = sum(tmpdisp.^2,2);
-    % Compare squared distance to maximum allowed (2)
-    if max(tmpdisp) <= 2
-%         disp([num2str(k), ' is closed'])
-        closedflags(k) = true;
-        CC.closed(k) = true;
-    else
-        CC.closed(k) = false;
-    end
+    CC.closed(k) = isClosedPointsAboutCenter([tmpx,tmpy],cpx,gapParam);
+    closedflags(k) = CC.closed(k);
 end
 if sum(closedflags) == 0
     warning(noclosedError.message)

@@ -1,4 +1,4 @@
-function [ pore_locs , nn_seprange ] = bfPoreDetect( img_bf , rad_est )
+function [ pore_locs , nn_seprange , init_pore_locs ] = bfPoreDetect( img_bf , rad_est )
 %bfPoreDetect Uses input brightfield image and an estimated pore outer
 %radius to pick out the most obvious pores and return their locations
 %   INPUT:  img_bf - cropped brightfield image
@@ -49,9 +49,10 @@ BF = bf - bg;
 convim = conv2(BF,img_test1); % Convolve first time
 convim = wkeep(convim,size(BF)); % Trim down size
 % Extract local maxima of the image
-[ lm_idx,~ ] = find_locmax( convim ,rad1*2 , 'none' );
+[ lm_idx,~ ] = find_locmax( convim ,round(rad1*2) , 0.35 );
 % INITIAL PORE LOCATIONS
 [lm_row,lm_col] = ind2sub(size(BF),lm_idx);
+init_pore_locs = [lm_col,lm_row];
 
 %% Create img_test2 for location refinement
 % Prepare to loop over local maxima to extract images
@@ -61,8 +62,11 @@ for k = 1:numel(lm_row)
     ul = [lm_col(k),lm_row(k)] - boxrad;
     lr = [lm_col(k),lm_row(k)] + boxrad;
     % only add image to stack if it is far enough from edges
-    if sum(ul>=1) + sum(lr<=size(BF,1))==4
-        roi_im(:,:,k) = crop(BF,ul,lr);
+    cropim = crop(BF,ul,lr);
+%     if sum(ul>=1) + sum(lr<=size(BF,1)-1)==4
+    if isequal(size(cropim),[boxres,boxres])
+        roi_im(:,:,k) = cropim;
+%         roi_im(:,:,k) = crop(BF,ul,lr);
         inds2use = [inds2use,k];
     else
         roi_im(:,:,k) = zeros(boxres);
@@ -88,7 +92,7 @@ img_test2 = mean(roi_im(:,:,1:num2keep),3);
 %% convolve with brightfield image to get second-pass pore locations
 convim2 = conv2(BF,img_test2);
 convim2 = wkeep(convim2,size(BF)); % trim down to size(BF)
-[ lm_idx2,lm_ints2 ] = find_locmax( convim2 ,rad1*2 , 'none' );
+[ lm_idx2,lm_ints2 ] = find_locmax( convim2 ,round(rad1*2) , 'none' );
 
 % X,Y COORDS FOR SECOND-PASS LOCALIZATIONS
 % [ys1,xs1] = ind2sub(size(BF),lm_idx);

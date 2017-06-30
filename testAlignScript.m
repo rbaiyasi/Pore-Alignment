@@ -20,35 +20,40 @@ img_AFM = mean(img_AFM,3);
 % axis image
 
 [aY,aX] = size(img_AFM);
-%% get porelocs1
-boundimg = edge(img_AFM,'Canny' , [] , sqrt(2));
-CC = bwconncomp(boundimg);
-blankimg = zeros(CC.ImageSize);
-porelocs1 = zeros(CC.NumObjects,2);
-for k = 1:CC.NumObjects
-    tmpimg = blankimg;
-    tmpimg(CC.PixelIdxList{k}) = 1;
-    cpx = calcCofMass(tmpimg);
-    [tmpy,tmpx] = ind2sub(CC.ImageSize,CC.PixelIdxList{k});
-    if numel(CC.PixelIdxList{k}) < 10
-        CC.closed(k) = false;
-    else
-        CC.closed(k) = isClosedPointsAboutCenter([tmpx,tmpy],cpx);
-    end
-    porelocs1(k,:) = cpx;
-end
-porelocs1 = porelocs1(CC.closed,:);
-CC.PixelIdxList(~CC.closed) = [];
-CC.NumObjects = numel(CC.PixelIdxList);
-CC.closed = true(1,CC.NumObjects);
-
+% %% get porelocs1
+% boundimg = edge(img_AFM,'Canny' , [] , sqrt(2));
+% CC = bwconncomp(boundimg);
+% blankimg = zeros(CC.ImageSize);
+% porelocs1 = zeros(CC.NumObjects,2);
+% for k = 1:CC.NumObjects
+%     tmpimg = blankimg;
+%     tmpimg(CC.PixelIdxList{k}) = 1;
+%     cpx = calcCofMass(tmpimg);
+%     [tmpy,tmpx] = ind2sub(CC.ImageSize,CC.PixelIdxList{k});
+%     if numel(CC.PixelIdxList{k}) < 10
+%         CC.closed(k) = false;
+%     else
+%         CC.closed(k) = isClosedPointsAboutCenter([tmpx,tmpy],cpx,18);
+%     end
+%     porelocs1(k,:) = cpx;
+% end
+% porelocs1 = porelocs1(CC.closed,:);
+% CC.PixelIdxList(~CC.closed) = [];
+% CC.NumObjects = numel(CC.PixelIdxList);
+% CC.closed = true(1,CC.NumObjects);
+[ pore_locs , nn_seprange ] = afmPoreDetect( img_AFM );
+[porelocs1 , filterParams] = filterByNN(pore_locs);
 
 
 %% get NN_seprange
-nn_seprange = getNNseprange(porelocs1,[],3);
+% nn_seprange = getNNseprange(porelocs1,[],3);
 % Filter out bad points
-nnmu = mean(nn_seprange);
-nnrng = nnmu-nn_seprange(1);
+% nnmu = mean(nn_seprange);
+% nnrng = nnmu-nn_seprange(1);
+%use filterParams instead
+nnmu = filterParams.mu;
+nnrng = filterParams.sigma;
+nn_seprange = nnrng*[-1,1]+nnmu;
 dispmat = genDispmat(porelocs1);
 dispmat = abs(dispmat-nnmu);
 dispmat = dispmat <= nnrng;
@@ -87,7 +92,7 @@ mov = makeimmovie(extractedROIs.imgs);
 % implay(mov)
 
 %% Testing pore localization through circular fitting
-[ xy0 , R ] = poreFit2Circle( extractedROIs.imgs );
+[ xy0 , R ] = poreFit2Circle( extractedROIs.imgs , [] , 2 );
 
 
 % Add refined pore positions to figure(1)

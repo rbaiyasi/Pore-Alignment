@@ -28,9 +28,9 @@ calcGrad = @(xtheta2) [1i*exp(1i*xtheta2(1)')*p1s';-onev']*errVect(xtheta2);
 calcPs = @(xtheta3) exp(1i*xtheta3(1))*p1s + xtheta3(2)*onev;
 
 %% Minimization parameters
-maxiter = 200;
+maxiter = 1000;
 % step sizes are arbitrarily set at this point, by what works
-stepsize = [1e-7;2e-2]; %different step size for each parameter
+stepsize = [1e-7;2e-2]*1e-1; %different step size for each parameter
 theta_init = [0;0];
 err_thresh = 0.005;
 

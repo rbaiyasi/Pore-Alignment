@@ -7,6 +7,11 @@ function [ hLines , vLines ] = gridFromLocs( porelocs , nn_seprange )
 %               neighbors from the rif-raf.
 %   OUTPUT: hLines(vLines) - the sets of parallel lines that are close to
 %               horizontal(vertical) to initialize the grid.
+nanpts = isnan(porelocs(:,1)+porelocs(:,2));
+if sum(nanpts) > 0
+    disp('Removing placeholder points')
+    porelocs = porelocs(~nanpts,:);
+end
 N = size(porelocs,1); % number of localizations
 % Get displacements and expected nearest-neighbors distance range
 dispmat = genDispmat( porelocs );
@@ -24,13 +29,43 @@ NNangs = zeros(4,N);
 for k = 1:N % Loop over each pore localization
     centerpt = porelocs(k,:);
     ptslist = porelocs(find(nnBinary(:,k)),:);
-    [NNdists(:,k),NNangs(:,k)] = getNNparams(centerpt,ptslist);
+    try % Try to find nearest neighbors with auto ptslist
+        [NNdists(:,k),NNangs(:,k)] = getNNparams(centerpt,ptslist);
+    catch ME % If multiple points were assigned to position, remove one
+        if strcmp(ME.identifier,'pores:getNNparams:tooManyInPt')
+            disp(['Iteration ', num2str(k)])
+            tmpdisps = ptslist - repmat(centerpt,size(ptslist,1),1);
+            tmpdisps = sum(tmpdisps.^2,2);
+            ptslist((tmpdisps - nnmu) < nnrange/2 , :) = [];
+            size(ptslist)
+            try %try again
+                [NNdists(:,k),NNangs(:,k)] = getNNparams(centerpt,ptslist);
+                disp('Succeeded')
+            catch ME2
+                if strcmp(ME2.identifier,'pores:getNNparams:tooManyInPt')
+                    NNdists(:,k) = NaN;
+                    NNangs(:,k) = NaN;
+                else
+                    error(ME2)
+                end
+            end
+            
+        else
+            error(ME)
+        end
+    end
 end
 NNang = nanmean(NNangs,2);
 
 %% Calculating lines
 % Calculate slope and intercept for first horizontal and vertical line
 kk = find(numnn==4,1); % Use first pore with 4 nearest neighbors as point
+if isempty(kk)
+    kk = find(numnn==3,1);
+end
+if isempty(kk)
+    error('No point has at least 3 nearest neighbors');
+end
 Hslope = cot(-mean(NNang(1:2)));
 Hint = ptslopeform(Hslope,porelocs(kk,:));
 Vslope = cot(-mean(NNang(3:4)));
