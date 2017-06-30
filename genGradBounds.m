@@ -43,8 +43,14 @@ BW = edge(dImag2,'Canny',[],Canny_sigma);
 B = bwboundaries(BW);
 
 % Check that there are 2 regions found. This may be altered later.
-if numel(B) ~= 4
-    error('There are not 2 edges detected');
+if numel(B) > 2 && numel(B) < 4
+%     error('There are not 2 edges detected');
+    disp(['There are only ',num2str(numel(B)), ' edges detected']);
+elseif numel(B) == 0
+    disp('No boundaries found')
+    outbound = [];
+    inbound = [];
+    return
 end
 
 % Bounds are outside of larger circle and smaller circles
