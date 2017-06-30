@@ -50,11 +50,12 @@ for k = 1:size(poreims,3)
 end  
 figure(afmfig);
 hold on
+lnwdth = 2;
 for k = 1:numel(outbound)
     pts1 = outbound{k};
     pts2 = inbound{k};
-    plot(pts1(:,1),pts1(:,2),'r')
-    plot(pts2(:,1),pts2(:,2),'m')
+    plot(pts1(:,1),pts1(:,2),'r','LineWidth',lnwdth)
+    plot(pts2(:,1),pts2(:,2),'m','LineWidth',lnwdth)
 end
 clearvars pts1 pts2
 hold off
@@ -113,7 +114,7 @@ end
 
 figure(bffig);
 hold on
-lnwdth = 2;
+
 for k = 1:numel(nout)
     plot(nout{k}(:,1),nout{k}(:,2),'r','LineWidth',lnwdth);
     plot(nin{k}(:,1),nin{k}(:,2),'m','LineWidth',lnwdth);
