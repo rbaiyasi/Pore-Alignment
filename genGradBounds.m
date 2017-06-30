@@ -1,4 +1,4 @@
-function [ outbound , inbound ] = genGradBounds( img , varargin )
+function [ outbound , inbound , dImag2 , BW ] = genGradBounds( img , varargin )
 %genGradBounds Used to generate edges for AFM images of pores using
 %gradient calculation between points to distinguish pore walls from flat
 %regions.
