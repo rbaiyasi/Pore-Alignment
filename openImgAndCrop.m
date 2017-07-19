@@ -3,14 +3,16 @@ savepath = 'C:\Users\rib1.ADRICE\Documents\PoreAdsorbtion\RawData\AFM_images\';
 PFXS = {'AFM','BF'};
 vars2save = {'ul','lr','filename','Data1','Data0','PFXS'};
 PathName = [ogPath,'\'];
-[FileName , PathName] = uigetfile('AFM*.tif','Choose AFM image',ogPath);
+% [FileName , PathName] = uigetfile('AFM*.tif','Choose AFM image',ogPath);
+[FileName , PathName] = uigetfile('AFM*.jpg','Choose AFM image',ogPath);
 if ~FileName
     error('No Image selected');
 end
 delim1 = '_';
+delim2 = '.';
 parsestr = strsplit(FileName,delim1);
 filetype = parsestr{1};
-filename = parsestr{2};
+filename = strjoin(parsestr(2:end),delim1);
 filename = filename(1:end-4);
 tmpimg = imread([PathName,FileName]);
 tmpimg = mean(tmpimg,3); %mean
