@@ -4,7 +4,7 @@ PFXS = {'AFM','BF'};
 vars2save = {'ul','lr','filename','Data1','Data0','PFXS'};
 PathName = [ogPath,'\'];
 % [FileName , PathName] = uigetfile('AFM*.tif','Choose AFM image',ogPath);
-[FileName , PathName] = uigetfile('AFM*.jpg','Choose AFM image',ogPath);
+[FileName , PathName] = uigetfile('AFM*.*','Choose AFM image',ogPath);
 if ~FileName
     error('No Image selected');
 end
