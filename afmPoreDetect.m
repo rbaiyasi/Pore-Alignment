@@ -1,11 +1,15 @@
-function [ pore_locs , nn_seprange , CC ] = afmPoreDetect( img_AFM )
+function [ pore_locs , nn_seprange , CC ] = afmPoreDetect( img_AFM , CannySigma)
 %bfPoreDetect Uses input afm image and to pick out the most obvious pores 
 %and return their locations.
 %   INPUT:  img_AFM - cropped afm image
+%           CannySigma - Sigma parameter for Canny edge detection. Defaults
+%                   to sqrt(2);
 %   OUTPUT: pore_locs - estimated pore centers for pores picked out by
 %               convolution listed as [x,y] row vectors
-
-boundimg = edge(img_AFM , 'Canny' , [] , sqrt(2));
+if nargin < 2
+    CannySigma = sqrt(2);
+end
+boundimg = edge(img_AFM , 'Canny' , [] , CannySigma);
 CC = bwconncomp(boundimg);
 blankimg = zeros(CC.ImageSize);
 porelocs1 = zeros(CC.NumObjects,2);
